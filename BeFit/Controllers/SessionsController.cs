@@ -47,6 +47,12 @@ namespace BeFit.Controllers
                 return NotFound();
             }
 
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (session.UserId != userId)
+            {
+                return Forbid();
+            }
+
             return View(session);
         }
 
@@ -86,6 +92,13 @@ namespace BeFit.Controllers
             {
                 return NotFound();
             }
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (session.UserId != userId)
+            {
+                return Forbid();
+            }
+
             return View(session);
         }
 
@@ -99,6 +112,19 @@ namespace BeFit.Controllers
             if (id != session.Id)
             {
                 return NotFound();
+            }
+
+            // Pobieranie istniejącej sesji i sprawdzenie właściciela
+            var existing = await _context.Session.FindAsync(id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (existing.UserId != userId)
+            {
+                return Forbid();
             }
 
             if (ModelState.IsValid)
@@ -139,6 +165,12 @@ namespace BeFit.Controllers
                 return NotFound();
             }
 
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (session.UserId != userId)
+            {
+                return Forbid();
+            }
+
             return View(session);
         }
 
@@ -153,6 +185,13 @@ namespace BeFit.Controllers
                 _context.Session.Remove(session);
             }
 
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (session.UserId != userId)
+            {
+                return Forbid();
+            }
+
+            _context.Session.Remove(session);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
