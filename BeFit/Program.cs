@@ -32,11 +32,13 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Hardkodowane konto administratora (na pewno o tym nie zapomnę przed dodaniem na prod)
+// Hardkodowane konta
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+    
+    // Admin
     var adminEmail = "admin@admin.com";
     var adminPassword = "Admin123!";
     if (await userManager.FindByEmailAsync(adminEmail) == null)
@@ -46,6 +48,26 @@ using (var scope = app.Services.CreateScope())
         if (result.Succeeded)
         {
             await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+    }
+
+    // User 1 i 2
+    var users = new[]
+    {
+        new { Email = "user_1@befit.com", Password = "User123!" },
+        new { Email = "user_2@befit.com", Password = "User123!" }
+    };
+
+    foreach (var user in users)
+    {
+        if (await userManager.FindByEmailAsync(user.Email) == null)
+        {
+            var newUser = new IdentityUser { UserName = user.Email, Email = user.Email, EmailConfirmed = true };
+            var result = await userManager.CreateAsync(newUser, user.Password);
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(newUser, "User");
+            }
         }
     }
 }
