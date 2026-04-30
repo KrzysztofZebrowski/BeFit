@@ -61,7 +61,7 @@ namespace BeFit.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([Bind("Id,Name")] ExerciseType exerciseType)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description")] ExerciseType exerciseType)
         {
             if (ModelState.IsValid)
             {
@@ -95,7 +95,7 @@ namespace BeFit.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] ExerciseType exerciseType)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] ExerciseType exerciseType)
         {
             if (id != exerciseType.Id)
             {

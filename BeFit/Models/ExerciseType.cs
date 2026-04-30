@@ -11,6 +11,7 @@ namespace BeFit.Models
         [Display(Name = "Nazwa ćwiczenia")]
         public string Name { get; set; }
 
-        
+        [Display(Name = "Opis ćwiczenia")]
+        public string? Description { get; set; }
     }
 }
