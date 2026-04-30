@@ -126,7 +126,10 @@ namespace BeFit.Controllers
                 return NotFound();
             }
 
-            var exercise = await _context.Exercise.FindAsync(id);
+            var exercise = await _context.Exercise
+                .Include(e => e.Session)
+                .Include(e => e.ExerciseType)
+                .FirstOrDefaultAsync(e => e.Id == id);
             
             if (exercise == null)
             {
@@ -144,9 +147,10 @@ namespace BeFit.Controllers
                 "Name", 
                 exercise.ExerciseTypeId);
 
-            ViewData["SessionId"] = new SelectList(_context.Session, 
-                "Id", 
-                "Start", 
+            ViewData["SessionId"] = new SelectList(_context.Session
+                .Where(s => s.UserId == userId),
+                "Id",
+                "Start",
                 exercise.SessionId);
 
             return View(exercise);
@@ -202,7 +206,7 @@ namespace BeFit.Controllers
                     existingExercise.ExerciseTypeId = exercise.ExerciseTypeId;
                     existingExercise.SessionId = exercise.SessionId;
 
-                    _context.Update(exercise);
+                    _context.Update(existingExercise);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -224,11 +228,12 @@ namespace BeFit.Controllers
                 "Name", 
                 exercise.ExerciseTypeId);
             
-            ViewData["SessionId"] = new SelectList(_context.Session, 
+            ViewData["SessionId"] = new SelectList(_context.Session
+                .Where(s => s.UserId == userId), 
                 "Id", 
                 "Start", 
                 exercise.SessionId);
-            
+
             return View(exercise);
         }
 
@@ -264,10 +269,13 @@ namespace BeFit.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var exercise = await _context.Exercise.FindAsync(id);
-            if (exercise != null)
+            var exercise = await _context.Exercise
+                .Include(e => e.Session)
+                .FirstOrDefaultAsync(e => e.Id == id);
+            
+            if (exercise == null)
             {
-                _context.Exercise.Remove(exercise);
+                return NotFound();
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

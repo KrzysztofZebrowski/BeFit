@@ -131,7 +131,12 @@ namespace BeFit.Controllers
             {
                 try
                 {
-                    _context.Update(session);
+                    // istniejąca encja
+                    existing.Start = session.Start;
+                    existing.End = session.End;
+
+                    
+                    _context.Update(existing);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
