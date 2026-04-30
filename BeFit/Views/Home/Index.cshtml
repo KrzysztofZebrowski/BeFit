@@ -9,7 +9,7 @@
 
 
 <div style="border: 1px solid #ccc; padding: 10px; margin-top: 20px;">
-    <p>Szybkie logowanie:</p>
+    <p><strong>Szybkie logowanie:</strong></p>
     
     <form asp-action="SwitchUser" method="post" style="display:inline;">
         <input type="hidden" name="email" value="admin@admin.com" />
@@ -28,5 +28,21 @@
 
     <form asp-area="Identity" asp-page="/Account/Logout" method="post" style="display:inline;">
         <button type="submit">WYLOGUJ</button>
+    </form>
+</div>
+
+
+<div style="border: 1px solid #ccc; padding: 10px; margin-top: 20px; background-color: #f9f9f9;">
+    <p><strong>Zarządzanie danymi testowymi:</strong></p>
+    
+    <form asp-action="ImportData" method="post" style="display:inline;">
+        <button type="submit" style="background-color: #28a745; color: white;">+ DODAJ PRZYKŁADOWE SESJE UŻYTKOWNIKOWI</button>
+    </form>
+
+    <form asp-action="ClearSessions" method="post" style="display:inline;">
+        <button type="submit" style="background-color: #dc3545; color: white;"
+                onclick="return confirm('Czy na pewno usunąć wszystkie sesje?')">
+            - USUŃ WSZYSTKIE DANE
+        </button>
     </form>
 </div>

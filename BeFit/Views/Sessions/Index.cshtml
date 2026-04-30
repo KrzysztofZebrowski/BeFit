@@ -36,11 +36,12 @@
             <td>
                 @Html.DisplayFor(modelItem => item.User.UserName)
             </td>
-
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edycja</a> |
+                <a asp-controller="Exercises" 
+                    asp-action="Index"
+                    asp-route-sessionId="@item.Id"> Szczegóły</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Usuń</a>
             </td>
         </tr>
 }
