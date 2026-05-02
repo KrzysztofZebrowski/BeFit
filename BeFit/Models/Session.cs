@@ -18,6 +18,8 @@ namespace BeFit.Models
         public DateTime End { get; set; }   
         
         public string? UserId { get; set; }
+
+        [Display(Name = "Użytkownik")]
         public IdentityUser? User { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

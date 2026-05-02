@@ -4,12 +4,10 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Twoje sesje treningowe</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<br/>
+<table class="table text-center align-middle">
     <thead>
         <tr>
             <th>
@@ -21,7 +19,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.User)
             </th>
-            <th></th>
+            <th>Akcje</th>
         </tr>
     </thead>
     <tbody>
@@ -47,3 +45,6 @@
 }
     </tbody>
 </table>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Dodaj sesję</a>
+</p>
