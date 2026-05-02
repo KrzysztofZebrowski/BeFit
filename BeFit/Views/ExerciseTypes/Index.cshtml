@@ -4,15 +4,15 @@
     ViewData["Title"] = "Title";
 }
 
-<h1>Typy ćwiczeń</h1>
+<h1>Ćwiczenia</h1>
 
 <p>
     @if (User.IsInRole("Admin"))
     {
-        <a asp-action="Create">Dodaj nowe ćwiczenie</a>
+        <a asp-action="Create" class="btn btn-primary">Dodaj nowe ćwiczenie</a>
     }
 </p>
-<table class="table">
+<table class="table text-center align-middle">
     <thead>
         <tr>
             <th>
@@ -28,15 +28,12 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Zobacz opis</a>
                     @if (User.IsInRole("Admin"))
                     {
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> @:|
-                        <a asp-action="Details" asp-route-id="@item.Id"> Details </a> @:|
-                        <a asp-action = "Delete" asp-route-id = "@item.Id"> Delete </a>
-                    }
-                    else
-                    {
-                        <a asp-action="Details" asp-route-id="@item.Id"> Details </a>
+                        @: |
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edytuj</a> @:| 
+                        <a asp-action = "Delete" asp-route-id = "@item.Id"> Usuń</a>
                     }
             </td>
         </tr>

@@ -23,14 +23,37 @@ namespace BeFit.Controllers
         }
 
         // GET: Exercises
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? sessionId)
         {
+            if (sessionId == null) return NotFound();
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             
             var applicationDbContext = _context.Exercise
                 .Include(e => e.ExerciseType)
                 .Include(e => e.Session)
-                .Where(e => e.Session != null && e.Session.UserId == userId);
+                .Where(e => e.Session != null && e.Session.UserId == userId)
+                .AsQueryable();
+
+            if (sessionId.HasValue)
+            {
+                applicationDbContext = applicationDbContext
+                    .Where(e => e.SessionId == sessionId.Value);
+                ViewBag.CurrentSessionId = sessionId;
+
+                // Pobieranie informacji o sesji, aby wyświetlić datę w widoku index
+                var session = await _context.Session.FirstOrDefaultAsync(s => s.Id == sessionId.Value);
+                
+                if (session == null || session.UserId != userId)
+                {
+                    return Forbid();
+                }
+
+                if (session != null)
+                {
+                    ViewBag.CurrentSessionStart = session.Start;
+                }
+            }
 
             return View(await applicationDbContext.ToListAsync());
         }
@@ -64,20 +87,32 @@ namespace BeFit.Controllers
         }
 
         // GET: Exercises/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create(int? sessionId)
         {
+            if (sessionId == null) return NotFound();
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             
             ViewData["ExerciseTypeId"] = new SelectList(_context.ExerciseType, 
                 "Id", 
                 "Name");
 
+            var session = await _context.Session.FindAsync(sessionId);
+
+            if (session == null || session.UserId != userId) return Forbid();
+
+            ViewBag.CurrentSessionId = sessionId;
+            ViewBag.SessionDate = session.Start;
+
+            /*
             ViewData["SessionId"] = new SelectList(_context.Session
                 .Where(s => s.UserId == userId), 
                 "Id", 
                 "Start");
+            */
 
             return View();
+            
         }
 
         // POST: Exercises/Create
@@ -101,7 +136,13 @@ namespace BeFit.Controllers
             {
                 _context.Add(exercise);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new {sessionId = exercise.SessionId});
+            }
+
+            if (session != null)
+            {
+                ViewBag.CurrentSessionId = exercise.SessionId;
+                ViewBag.SessionDate = session.Start;
             }
 
             ViewData["ExerciseTypeId"] = new SelectList(_context.ExerciseType, 
@@ -109,11 +150,13 @@ namespace BeFit.Controllers
                 "Name", 
                 exercise.ExerciseTypeId);
 
+            /*
             ViewData["SessionId"] = new SelectList(_context.Session
                 .Where(s => s.UserId == userId), 
                 "Id", 
                 "Start", 
                 exercise.SessionId);
+            */
             
             return View(exercise);
         }
@@ -142,16 +185,21 @@ namespace BeFit.Controllers
                 return Forbid();
             }
 
+            ViewBag.CurrentSessionId = exercise.SessionId;
+            ViewBag.SessionDate = exercise.Session.Start;
+
             ViewData["ExerciseTypeId"] = new SelectList(_context.ExerciseType, 
                 "Id", 
                 "Name", 
                 exercise.ExerciseTypeId);
 
+            /*
             ViewData["SessionId"] = new SelectList(_context.Session
                 .Where(s => s.UserId == userId),
                 "Id",
                 "Start",
                 exercise.SessionId);
+            */
 
             return View(exercise);
         }
@@ -204,7 +252,7 @@ namespace BeFit.Controllers
                     existingExercise.NumOfSeries = exercise.NumOfSeries;
                     existingExercise.NumOfReps = exercise.NumOfReps;
                     existingExercise.ExerciseTypeId = exercise.ExerciseTypeId;
-                    existingExercise.SessionId = exercise.SessionId;
+                    // existingExercise.SessionId = exercise.SessionId;
 
                     _context.Update(existingExercise);
                     await _context.SaveChangesAsync();
@@ -220,19 +268,24 @@ namespace BeFit.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { sessionId = existingExercise.SessionId });
             }
-            
+
+            ViewBag.CurrentSessionId = existingExercise.SessionId;
+            ViewBag.SessionDate = existingExercise.Session.Start;
+
             ViewData["ExerciseTypeId"] = new SelectList(_context.ExerciseType, 
                 "Id", 
                 "Name", 
                 exercise.ExerciseTypeId);
             
+            /*
             ViewData["SessionId"] = new SelectList(_context.Session
                 .Where(s => s.UserId == userId), 
                 "Id", 
                 "Start", 
                 exercise.SessionId);
+            */
 
             return View(exercise);
         }
@@ -261,6 +314,9 @@ namespace BeFit.Controllers
                 return Forbid();
             }
 
+            ViewBag.CurrentSessionId = exercise.SessionId;
+            ViewBag.SessionDate = exercise.Session.Start;
+
             return View(exercise);
         }
 
@@ -284,9 +340,11 @@ namespace BeFit.Controllers
                 return Forbid();
             }
 
+            var sessionIdToReturn = exercise.SessionId;
+
             _context.Exercise.Remove(exercise);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { sessionId = sessionIdToReturn });
         }
 
         private bool ExerciseExists(int id)

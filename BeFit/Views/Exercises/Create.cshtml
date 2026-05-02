@@ -4,14 +4,26 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+@if (ViewBag.SessionDate != null)
+{
+    <h3 class="text-primary mt-3">Dodawanie ćwiczenia do sesji: @ViewBag.SessionDate</h3>
+}
+else
+{
+    <h1>Create</h1>
+    <h4>Exercise</h4>
+}
 
-<h4>Exercise</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type ="hidden" asp-for="SessionId" value="@ViewBag.CurrentSessionId" />
+            <div class="form-group">
+                <label asp-for="ExerciseTypeId" class="control-label"></label>
+                <select asp-for="ExerciseTypeId" class="form-control" asp-items="ViewBag.ExerciseTypeId"></select>
+            </div>
             <div class="form-group">
                 <label asp-for="Weight" class="control-label"></label>
                 <input asp-for="Weight" class="form-control" />
@@ -27,14 +39,7 @@
                 <input asp-for="NumOfReps" class="form-control" />
                 <span asp-validation-for="NumOfReps" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ExerciseTypeId" class="control-label"></label>
-                <select asp-for="ExerciseTypeId" class ="form-control" asp-items="ViewBag.ExerciseTypeId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="SessionId" class="control-label"></label>
-                <select asp-for="SessionId" class="form-control" asp-items="ViewBag.SessionId"></select>
-            </div><br>
+            <br>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -43,7 +48,14 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    @if (ViewBag.CurrentSessionId != null)
+    {
+        <a asp-action="Index" asp-route-sessionId="@ViewBag.CurrentSessionId" class="btn btn-outline-secondary">Wróć do listy ćwiczeń tej sesji</a>
+    }
+    else
+    {
+        <a asp-action="Index">Back to List</a>
+    }
 </div>
 
 @section Scripts {

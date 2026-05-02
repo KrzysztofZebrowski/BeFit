@@ -4,14 +4,23 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Ćwiczenia w sesji</h1>
+@if (ViewBag.CurrentSessionStart != null)
+{
+    <h1>Sesja z dnia: @ViewBag.CurrentSessionStart</h1>
+}
+else
+{
+    <h1>Ćwiczenia w sesji:</h1>
+}
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+
+<br>
+<table class="table text-center align-middle">
     <thead>
         <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ExerciseType)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Weight)
             </th>
@@ -21,18 +30,15 @@
             <th>
                 @Html.DisplayNameFor(model => model.NumOfReps)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ExerciseType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Session)
-            </th>
-            <th></th>
+            <th>Akcje</th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExerciseType.Name)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Weight)
             </td>
@@ -43,17 +49,21 @@
                 @Html.DisplayFor(modelItem => item.NumOfReps)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ExerciseType.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Session.Start) - @Html.DisplayFor(modelItem => item.Session.End)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edytuj</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Usuń</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+<p>
+    @if (ViewBag.CurrentSessionId != null)
+    {
+        <a asp-action="Create" asp-route-sessionId="@ViewBag.CurrentSessionId" class="btn btn-primary">Dodaj ćwiczenie do tej sesji</a>
+    }
+    else
+    {
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+    }
+</p>
