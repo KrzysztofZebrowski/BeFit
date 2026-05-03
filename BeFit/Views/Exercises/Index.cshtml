@@ -4,81 +4,87 @@
     ViewData["Title"] = "Index";
 }
 
-@if (ViewBag.CurrentSessionStart != null)
+<h1>Informacje o sesji</h1>
+
+@if (!Model.Any())
 {
-    <h1>Informacje o sesji</h1>
-    <h4>@ViewBag.CurrentSessionStart</h4>
-    @if (User.IsInRole("Admin"))
+    <div class="alert alert-info">
+        Nie dodano żadnych ćwiczeń w tej sesji treningowej. Zmień to :)
+    </div>
+}
+else
+{
+    <h5 class="text-muted mb-4">@ViewBag.CurrentSessionStart</h5>
+    @if (User.IsInRole("Admin") && ViewBag.CurrentSessionId != null)
     {
         <p>
             <a asp-action="Index" class="btn btn-primary">Pokaż ćwiczenia wszystkich użytkowników</a>
         </p>
     }
-}
-else
-{
-    <h1>Ćwiczenia wszystkich użytkowników:</h1>
-}
-<br />
-<table class="table text-center align-middle">
-    <thead>
-        <tr>
-            @if (User.IsInRole("Admin"))
-            {
-                <th>Użytkownik</th>
-                <th>Data sesji</th>
-            }
-            <th>
-                @Html.DisplayNameFor(model => model.ExerciseType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Weight)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumOfSeries)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumOfReps)
-            </th>
-            <th>Akcje</th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            @if (User.IsInRole("Admin"))
-            {
-                <td>
-                    @(item.Session?.User?.UserName ?? "Brak")
-                </td>
-                <td>
-                    @(item.Session?.Start.ToString("g") ?? "Brak")
-                </td>
+    
+    <br />
+    <table class="table text-center align-middle">
+        <thead>
+            <tr>
+                @if (User.IsInRole("Admin"))
+                {
+                    <th>Użytkownik</th>
+                    <th>Data sesji</th>
                 }
-            <td>
-                @Html.DisplayFor(modelItem => item.ExerciseType.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Weight)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumOfSeries)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumOfReps)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edytuj</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Usuń</a>
-            </td>
-        </tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ExerciseType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Weight)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NumOfSeries)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NumOfReps)
+                </th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <td>
+                            @(item.Session?.User?.UserName ?? "Brak")
+                        </td>
+                        <td>
+                            @(item.Session?.Start.ToString("g") ?? "Brak")
+                        </td>
+                    }
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ExerciseType.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Weight)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumOfSeries)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumOfReps)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edytuj</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Usuń</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
-    </tbody>
-</table>
 
 <p>
     @if (ViewBag.CurrentSessionId != null)
     {
-        <a asp-action="Create" asp-route-sessionId="@ViewBag.CurrentSessionId" class="btn btn-primary">Dodaj ćwiczenie do tej sesji</a>
+        <a asp-action="Create" asp-route-sessionId="@ViewBag.CurrentSessionId" class="btn btn-primary align-middle">Dodaj ćwiczenie</a>
+        <a asp-controller="Sessions" asp-action="Index" class="btn btn-secondary">Cofnij do listy sesji</a>
     }
 </p>

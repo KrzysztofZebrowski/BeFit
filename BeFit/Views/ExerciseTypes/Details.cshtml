@@ -29,7 +29,7 @@
     @if (User.IsInRole("Admin"))
     {
         <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Edytuj</a>
-        <a asp-action="Index" class="btn btn-outline-secondary">Powrót do listy ćwiczeń</a>
+        <a asp-action="Index" class="btn btn-secondary">Powrót do listy ćwiczeń</a>
     }
     else
     {

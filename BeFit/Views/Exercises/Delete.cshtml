@@ -6,7 +6,7 @@
 
 @if (ViewBag.SessionDate != null)
 {
-    <h3 class="text-danger mt-3">Usuwanie ćwiczenia z sesji: @ViewBag.SessionDate</h3>
+    <h1 class="text-danger mt-3">Usuwanie ćwiczenia z sesji: @ViewBag.SessionDate</h1>
 }
 else
 {
@@ -51,11 +51,11 @@ else
         
         @if (ViewBag.CurrentSessionId != null)
         {
-            <a asp-action="Index" asp-route-sessionId="@ViewBag.CurrentSessionId" class="btn btn-outline-secondary ms-2">Wróć do listy</a>
+            <a asp-action="Index" asp-route-sessionId="@ViewBag.CurrentSessionId" class="btn btn-secondary">Wróć do listy</a>
         }
         else
         {
-            <a asp-action="Index" class="btn btn-outline-secondary ms-2">Back to List</a>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
         }
     </form>
 </div>

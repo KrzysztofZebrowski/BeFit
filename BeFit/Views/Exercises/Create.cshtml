@@ -6,7 +6,8 @@
 
 @if (ViewBag.SessionDate != null)
 {
-    <h3 class="text-primary mt-3">Dodawanie ćwiczenia do sesji: @ViewBag.SessionDate</h3>
+    <h1 class="text-primary mt-3">Dodawanie ćwiczenia do sesji:</h1>
+    <h5 class="text-muted mb-4">@ViewBag.SessionDate</h5>
 }
 else
 {
@@ -41,21 +42,11 @@ else
             </div>
             <br>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Dodaj" class="btn btn-primary" />
+                <a asp-action="Index" asp-route-sessionId="@ViewBag.CurrentSessionId" class="btn btn-secondary">Wróć do listy ćwiczeń tej sesji</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    @if (ViewBag.CurrentSessionId != null)
-    {
-        <a asp-action="Index" asp-route-sessionId="@ViewBag.CurrentSessionId" class="btn btn-outline-secondary">Wróć do listy ćwiczeń tej sesji</a>
-    }
-    else
-    {
-        <a asp-action="Index">Back to List</a>
-    }
 </div>
 
 @section Scripts {

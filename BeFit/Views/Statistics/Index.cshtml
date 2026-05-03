@@ -1,0 +1,71 @@
+﻿@model BeFit.Models.Statistics
+
+@{
+    ViewData["Title"] = "Statystyki Treningowe";
+}
+
+<h1>Podsumowanie treningów</h1>
+<h5 class="text-muted mb-4">
+    Okres: @Model.StartDate.ToString("dd.MM.yyyy") - @Model.EndDate.ToString("dd.MM.yyyy")
+</h5>
+
+@if (!Model.ExerciseStats.Any())
+{
+    <div class="alert alert-info">
+        Brak danych z ostatnich 4 tygodni. Zrób trening, aby zobaczyć swoje statystyki!
+    </div>
+}
+else
+{
+    <table class="table text-center align-middle">
+        <thead>
+            <tr>
+                <th class="text-start">
+                    @Html.DisplayNameFor(model => model.ExerciseStats.FirstOrDefault().ExerciseName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ExerciseStats.FirstOrDefault().TotalRepetitions)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ExerciseStats.FirstOrDefault().AverageWeight) (kg)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ExerciseStats.FirstOrDefault().MaxWeight) (kg)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ExerciseStats)
+            {
+                <tr>
+                    <td class="text-start fw-bold text-primary">
+                        @item.ExerciseName
+                    </td>
+                    <td>
+                        @item.TotalRepetitions
+                    </td>
+                    <td>
+                        @if (item.AverageWeight > 0)
+                        {
+                            @item.AverageWeight.ToString("N2")
+                        }
+                        else
+                        {
+                            <span class="text-muted">-</span>
+                        }
+                    </td>
+                    <td class="fw-bold text-success">
+                        @if (item.MaxWeight > 0)
+                        {
+                            @item.MaxWeight.ToString("N1")
+                        }
+                        else
+                        {
+                            <span class="text-muted">-</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -15,7 +15,7 @@
 <table class="table text-center align-middle">
     <thead>
         <tr>
-            <th>
+            <th class="text-start">
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>Akcje</th>
@@ -24,11 +24,11 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
+                <td class="text-start">
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Zobacz opis</a>
+                    <a asp-action="Details" asp-route-id="@item.Id">Zobacz opis ćwiczenia</a>
                     @if (User.IsInRole("Admin"))
                     {
                         @: |
