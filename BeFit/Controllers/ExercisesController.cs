@@ -25,15 +25,21 @@ namespace BeFit.Controllers
         // GET: Exercises
         public async Task<IActionResult> Index(int? sessionId)
         {
-            if (sessionId == null) return NotFound();
+            if (sessionId == null && !User.IsInRole("Admin")) return NotFound();
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             
             var applicationDbContext = _context.Exercise
                 .Include(e => e.ExerciseType)
                 .Include(e => e.Session)
-                .Where(e => e.Session != null && e.Session.UserId == userId)
+                    .ThenInclude(s => s.User)
                 .AsQueryable();
+
+            if (!User.IsInRole("Admin"))
+            {
+                applicationDbContext = applicationDbContext
+                    .Where(e => e.Session != null && e.Session.UserId == userId);
+            }
 
             if (sessionId.HasValue)
             {
@@ -44,15 +50,12 @@ namespace BeFit.Controllers
                 // Pobieranie informacji o sesji, aby wyświetlić datę w widoku index
                 var session = await _context.Session.FirstOrDefaultAsync(s => s.Id == sessionId.Value);
                 
-                if (session == null || session.UserId != userId)
+                if (session == null || (session.UserId != userId && !User.IsInRole("Admin")))
                 {
                     return Forbid();
                 }
 
-                if (session != null)
-                {
-                    ViewBag.CurrentSessionStart = session.Start;
-                }
+                ViewBag.CurrentSessionStart = session.Start;
             }
 
             return View(await applicationDbContext.ToListAsync());
@@ -69,6 +72,7 @@ namespace BeFit.Controllers
             var exercise = await _context.Exercise
                 .Include(e => e.ExerciseType)
                 .Include(e => e.Session)
+                    .ThenInclude(s => s.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             
             if (exercise == null)
@@ -78,7 +82,7 @@ namespace BeFit.Controllers
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             
-            if (exercise.Session == null || exercise.Session.UserId != userId)
+            if (exercise.Session == null || (exercise.Session.UserId != userId && !User.IsInRole("Admin")))
             {
                 return Forbid();
             }
@@ -99,7 +103,7 @@ namespace BeFit.Controllers
 
             var session = await _context.Session.FindAsync(sessionId);
 
-            if (session == null || session.UserId != userId) return Forbid();
+            if (session == null || (session.UserId != userId && !User.IsInRole("Admin"))) return Forbid();
 
             ViewBag.CurrentSessionId = sessionId;
             ViewBag.SessionDate = session.Start;
@@ -127,7 +131,7 @@ namespace BeFit.Controllers
             // weryfikacja, czy wybrana sesja należy do użytkownika
             var session = await _context.Session.FindAsync(exercise.SessionId);
             
-            if (session == null || session.UserId != userId)
+            if (session == null || (session.UserId != userId && !User.IsInRole("Admin")))
             {
                 ModelState.AddModelError("SessionId", "Wybrana sesja jest nieprawidłowa.");
             }
@@ -180,7 +184,7 @@ namespace BeFit.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (exercise.Session == null || exercise.Session.UserId != userId)
+            if (exercise.Session == null || (exercise.Session.UserId != userId && !User.IsInRole("Admin")))
             {
                 return Forbid();
             }
@@ -227,7 +231,7 @@ namespace BeFit.Controllers
                 return NotFound();
             }
             
-            if (existingExercise.Session == null || existingExercise.Session.UserId != userId)
+            if (existingExercise.Session == null || (existingExercise.Session.UserId != userId && !User.IsInRole("Admin")))
             {
                 return Forbid();
             }
@@ -238,7 +242,7 @@ namespace BeFit.Controllers
                 return NotFound();
             } 
             
-            if (newSession.UserId != userId)
+            if (newSession.UserId != userId && !User.IsInRole("Admin"))
             {
                 return Forbid();
             }
@@ -301,6 +305,7 @@ namespace BeFit.Controllers
             var exercise = await _context.Exercise
                 .Include(e => e.ExerciseType)
                 .Include(e => e.Session)
+                    .ThenInclude(s => s.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             
             if (exercise == null)
@@ -309,7 +314,7 @@ namespace BeFit.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null || exercise.Session.UserId != userId)
+            if (userId == null || (exercise.Session.UserId != userId && !User.IsInRole("Admin")))
             {
                 return Forbid();
             }
@@ -335,7 +340,7 @@ namespace BeFit.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (exercise.Session == null || exercise.Session.UserId != userId)
+            if (exercise.Session == null || (exercise.Session.UserId != userId && !User.IsInRole("Admin")))
             {
                 return Forbid();
             }

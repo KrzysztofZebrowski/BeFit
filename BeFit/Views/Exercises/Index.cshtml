@@ -8,17 +8,26 @@
 {
     <h1>Informacje o sesji</h1>
     <h4>@ViewBag.CurrentSessionStart</h4>
+    @if (User.IsInRole("Admin"))
+    {
+        <p>
+            <a asp-action="Index" class="btn btn-primary">Pokaż ćwiczenia wszystkich użytkowników</a>
+        </p>
+    }
 }
 else
 {
-    <h1>Ćwiczenia w sesji:</h1>
+    <h1>Ćwiczenia wszystkich użytkowników:</h1>
 }
-
-
-<br>
+<br />
 <table class="table text-center align-middle">
     <thead>
         <tr>
+            @if (User.IsInRole("Admin"))
+            {
+                <th>Użytkownik</th>
+                <th>Data sesji</th>
+            }
             <th>
                 @Html.DisplayNameFor(model => model.ExerciseType)
             </th>
@@ -37,6 +46,15 @@ else
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            @if (User.IsInRole("Admin"))
+            {
+                <td>
+                    @(item.Session?.User?.UserName ?? "Brak")
+                </td>
+                <td>
+                    @(item.Session?.Start.ToString("g") ?? "Brak")
+                </td>
+                }
             <td>
                 @Html.DisplayFor(modelItem => item.ExerciseType.Name)
             </td>
@@ -62,9 +80,5 @@ else
     @if (ViewBag.CurrentSessionId != null)
     {
         <a asp-action="Create" asp-route-sessionId="@ViewBag.CurrentSessionId" class="btn btn-primary">Dodaj ćwiczenie do tej sesji</a>
-    }
-    else
-    {
-        <a asp-action="Create" class="btn btn-primary">Create New</a>
     }
 </p>

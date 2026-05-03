@@ -25,11 +25,20 @@ namespace BeFit.Controllers
         // GET: Sessions
         public async Task<IActionResult> Index()
         {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return View(await _context.Session
-                .Include(s => s.User)
-                .Where(s => s.UserId == userId)
-                .ToListAsync());
+            if (User.IsInRole("Admin"))
+            {
+                return View(await _context.Session
+                    .Include(s => s.User)
+                    .ToListAsync());
+            }
+            else
+            {
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                return View(await _context.Session
+                    .Include(s => s.User)
+                    .Where(s => s.UserId == userId)
+                    .ToListAsync());
+            } 
         }
 
         // GET: Sessions/Details/5
@@ -48,7 +57,7 @@ namespace BeFit.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (session.UserId != userId)
+            if (session.UserId != userId && !User.IsInRole("Admin"))
             {
                 return Forbid();
             }
@@ -94,7 +103,7 @@ namespace BeFit.Controllers
             }
             
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (session.UserId != userId)
+            if (session.UserId != userId && !User.IsInRole("Admin"))
             {
                 return Forbid();
             }
@@ -122,7 +131,7 @@ namespace BeFit.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (existing.UserId != userId)
+            if (existing.UserId != userId && !User.IsInRole("Admin"))
             {
                 return Forbid();
             }
@@ -171,7 +180,7 @@ namespace BeFit.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (session.UserId != userId)
+            if (session.UserId != userId && !User.IsInRole("Admin"))
             {
                 return Forbid();
             }
@@ -191,7 +200,7 @@ namespace BeFit.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (session.UserId != userId)
+            if (session.UserId != userId && !User.IsInRole("Admin"))
             {
                 return Forbid();
             }
